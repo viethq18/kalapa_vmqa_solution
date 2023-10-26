@@ -1,0 +1,7 @@
+langchain
+pandas
+chromadb
+python-dotenv
+transformers==4.34.1
+onnxruntime==1.14.1
+torch==2.0.1
