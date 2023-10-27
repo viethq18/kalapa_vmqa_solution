@@ -62,7 +62,7 @@ def process_output(output, num_ans):
     res = ""
     MAP_ANS = {0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f"}
     output = re.split(r"[.,、]", output)
-    output = [c.lower() for c in output if len(c)]
+    output = [c.strip().lower() for c in output if len(c)]
     print("OUTPUT: ", output)
     for i in range(num_ans):
         if MAP_ANS[i] in output:
