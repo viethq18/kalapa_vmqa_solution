@@ -9,7 +9,7 @@ class QwenInfer:
     def preprocess_prompt(self, question, choices, context=None):
         user_message_ = USER_MESSAGE.format(question=question, answer_choices=choices)
         if context is not None:
-            user_message_ = USER_MESSAGE_WITH_CONTEXT.format(context=context, question=question,
+            user_message_ = USER_MESSAGE_WITH_CONTEXT_VER_2.format(context=context, question=question,
                                                              answer_choices=choices)
         prompt = DEFAULT_PROMPT.format(user_message=user_message_)
         return prompt
@@ -22,13 +22,16 @@ class QwenInfer:
             "n": 1,
             "best_of": 1,
             "use_beam_search": False,
-            "temperature": 0.,
-            "top_p": 1.0,
-            "max_tokens": 30,
+            "temperature": 0.01,
             "presence_penalty": 1.5,
-            "ignore_eos": True,
+            "frequency_penalty": 0,
+            "top_p": 0.99,
+            "top_k": 10,
+            "max_tokens": 10,
+            "ignore_eos": False,
             "stop": ["<|endoftext|>"],
             "stream": False,
+            # "logprobs": 0
         }
         response = requests.post(url, headers=headers, json=pload)
         response_text = response.json()["text"]

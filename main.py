@@ -14,12 +14,13 @@ medical_corpus_db = Chroma(collection_name="kalapa_medical_corpus_clean",
                            collection_metadata={"hnsw:space": "cosine"})
 
 qwen_model = QwenInfer()
+embedding_model = mE5Embedding()
 
 
 def write_log(question, choices, context, prompt, output, output_json):
     with open("./logs.txt", "a+") as f:
         f.write(f"Context:\n{context}\n")
-        f.write(f"Question: {question}")
+        f.write(f"Question: {question}\n")
         f.write(f"Choices:\n{choices}\n")
         f.write(f"Prompt:\n{prompt}\n")
         f.write(f"Output: {output}\n")
@@ -44,29 +45,25 @@ def process_single_row(row):
 
 
 def get_context(question, top_k, use_litm=True):
-    embedding_vector = mE5Embedding().embed_documents([f"query: {question}"])
+    embedding_vector = embedding_model.embed_documents([f"query: {question}"])
     docs = medical_corpus_db.similarity_search_by_vector(embedding_vector[0], k=top_k)
     context = [doc.page_content for doc in docs]
     if use_litm:
         context = litm_reordering(context)
-    return "\n".join(context)
+    return "\n".join([c.replace("passage: ", "") for c in context])
 
 
 def process_output(output, num_ans):
     """Hard code, will remove later"""
     res = ""
-    try:
-        output_json = json.loads(output)
-    except:
-        if output[-2] != "\"":
-            output_json = json.loads(output + "}")
+    MAP_ANS = {0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f"}
+    output = [c.lower() for k in output.split(",") for c in k.split("、") if len(c)]
+    print("OUTPUT: ", output)
+    for i in range(num_ans):
+        if MAP_ANS[i] in output:
+            res += "1"
         else:
-            output_json = json.loads(output + "\"}")
-    print("JSON", output_json)
-    for k, v in output_json.items():
-        res += str(v)
-        if len(res) == num_ans:
-            break
+            res += "0"
     return res
 
 
