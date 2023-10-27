@@ -1,4 +1,5 @@
 import json
+import re
 
 import pandas as pd
 from langchain.vectorstores.chroma import Chroma
@@ -44,9 +45,12 @@ def process_single_row(row):
     return question, answer_choices, len(tmp_ans)
 
 
-def get_context(question, top_k, use_litm=True):
+def get_context(question, top_k, use_litm=True, use_mmr=False):
     embedding_vector = embedding_model.embed_documents([f"query: {question}"])
-    docs = medical_corpus_db.similarity_search_by_vector(embedding_vector[0], k=top_k)
+    if use_mmr:
+        docs = medical_corpus_db.max_marginal_relevance_search_by_vector(embedding_vector[0], k=top_k)
+    else:
+        docs = medical_corpus_db.similarity_search_by_vector(embedding_vector[0], k=top_k)
     context = [doc.page_content for doc in docs]
     if use_litm:
         context = litm_reordering(context)
@@ -57,13 +61,15 @@ def process_output(output, num_ans):
     """Hard code, will remove later"""
     res = ""
     MAP_ANS = {0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f"}
-    output = [c.lower() for k in output.split(",") for c in k.split("、") if len(c)]
+    output = re.split(r"[.,、]", output)
+    output = [c.lower() for c in output if len(c)]
     print("OUTPUT: ", output)
     for i in range(num_ans):
         if MAP_ANS[i] in output:
             res += "1"
         else:
             res += "0"
+    print(res)
     return res
 
 
