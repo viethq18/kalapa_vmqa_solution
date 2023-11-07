@@ -56,13 +56,17 @@ def get_context(question, top_k, use_litm=True, use_mmr=False):
         context = litm_reordering(context)
     return "\n".join([c.replace("passage: ", "") for c in context])
 
+def extract_letters(line):
+    matches = re.findall(r'\b([A-F])\b', line)
+    return matches
 
 def process_output(output, num_ans):
     """Hard code, will remove later"""
     res = ""
     MAP_ANS = {0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f"}
-    output = re.split(r"[.,、]", output)
-    output = [c.strip().lower() for c in output if len(c)]
+    # output = re.split(r"[.,、]", output)
+    # output = [c.strip().lower() for c in output if len(c)]
+    output = [c.lower() for c in extract_letters(output)]
     print("OUTPUT: ", output)
     for i in range(num_ans):
         if MAP_ANS[i] in output:

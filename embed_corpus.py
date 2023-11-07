@@ -42,8 +42,8 @@ def run_embedding_clean_corpus(corpus_path, chunk_size=200, chunk_overlap=50):
     for index, row in df.iterrows():
         raw_documents = [Document(page_content=f"{row['question']}\n{row['answer']}", metadata={"source": row["name"]})]
         print(row['question'])
-        documents = text_splitter.split_documents(raw_documents)
-        for text in documents:
+        # documents = text_splitter.split_documents(raw_documents)
+        for text in raw_documents:
             db_clean.add_texts(texts=[f"passage: {text.page_content}"], metadatas=[text.metadata])
 
 
@@ -62,5 +62,6 @@ if __name__ == "__main__":
     list_corpus_path = glob.glob(os.path.join("./KALAPA_ByteBattles_2023_MEDICAL_Set1/MEDICAL/corpus/corpus", "*"))
 
     # run_embedding_raw_corpus(list_corpus_path, chunk_size=800, chunk_overlap=200)
-    run_embedding_clean_corpus(corpus_path="./clean_v2.csv", chunk_size=800, chunk_overlap=200)
+    # run_embedding_clean_corpus(corpus_path="./clean_v2.csv", chunk_size=800, chunk_overlap=200)
+    run_embedding_clean_corpus(corpus_path="./klp_clean_v3.csv", chunk_size=800, chunk_overlap=200)
 

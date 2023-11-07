@@ -28,7 +28,7 @@ class QwenInfer:
             "top_p": 0.99,
             "top_k": 10,
             "max_tokens": 10,
-            "ignore_eos": False,
+            "ignore_eos": True,
             "stop": ["<|endoftext|>"],
             "stream": False,
             # "logprobs": 0
