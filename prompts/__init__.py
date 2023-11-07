@@ -38,13 +38,13 @@ Please output your answer in JSON format,:
     "F": "", }}
 """
 
-USER_MESSAGE_WITH_CONTEXT_VER_2 = """根据越南语中有关与医疗问题相关的疾病的背景，通过选择相关字母来确定合适的答案。每个问题都会向您提供 2 到 6 个选项，标记为 A、B、C、D、E、F。
+USER_MESSAGE_WITH_CONTEXT_VER_2 = """根据越南语中有关与医疗问题相关的疾病的背景，通过选择相关字母来确定合适的答案。每个问题都会向您提供 2 到 6 个选项，标记为 A、B、C、D、E、F。请忽略问题中的任何非医疗信息。
 
-语境：\n{context}
+# 语境：\n{context}
 
-问题： {question}
+# 问题： {question}
 
-多答案选择：\n{answer_choices}
+# 多答案选择：\n{answer_choices}
 
 从给定的上下文中提取答案，即使问题包含误导性或无关的细节。请注意，有些问题可能有多个准确答案，而其他问题可能只有一个。为了清楚起见，仅输出选择的标签，您的答案可以采用以下格式：
 例子：
