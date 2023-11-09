@@ -27,7 +27,7 @@ class QwenInfer:
             "frequency_penalty": 0,
             "top_p": 1,
             "top_k": -1,
-            "max_tokens": 10,
+            "max_tokens": 100,
             "ignore_eos": True,
             "stop": ["<|endoftext|>"],
             "stream": False,
