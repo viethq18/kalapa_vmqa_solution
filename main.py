@@ -63,7 +63,7 @@ def get_context(question, answer, top_k, use_litm=True, use_mmr=False):
             if sources[doc.metadata["source"]] >= 3:
                 continue
             context.append(doc.page_content)
-        context = context[:5]
+        context = context[:6]
 
     else:
         searches = answer.split('\n')
@@ -76,6 +76,7 @@ def get_context(question, answer, top_k, use_litm=True, use_mmr=False):
         # qdocs = medical_corpus_db.similarity_search_by_vector(qembedding_vector[0], k=2)
         # context += [doc.page_content for doc in qdocs]
 
+    context = list(set(context))
     if use_litm:
         context = litm_reordering(context)
     return "\n".join([c.replace("passage: ", "") for c in context])
