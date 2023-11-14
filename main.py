@@ -45,13 +45,29 @@ def process_single_row(row):
     return question, answer_choices, len(tmp_ans)
 
 
+def preprocess_question(question):
+    question = question.replace("?.", "?")
+    if question[-1] != "?":
+        question += "?"
+    type_predict = 0
+    if "là gì" in question.lower() and not len(re.findall(r"\bcác\b|\bnhững\b", question.lower())):
+        type_predict = 1
+    if "cách gì" in question.lower() and not len(re.findall(r"\bcác\b|\bnhững\b", question.lower())):
+        type_predict = 1
+
+    if type_predict == 1:
+        question += " (仅选择 1 个正确答案。)"
+    else:
+        pass
+    return question
+
 def get_context(question, answer, top_k, use_litm=True, use_mmr=False):
     if 'dưới đây' not in question:
         embedding_vector = embedding_model.embed_documents([f"query: {question}"])
-        # if use_mmr:
-        #     docs = medical_corpus_db.max_marginal_relevance_search_by_vector(embedding_vector[0], k=top_k)
-        # else:
-        docs = medical_corpus_db.similarity_search_by_vector(embedding_vector[0], k=15)
+        if use_mmr:
+            docs = medical_corpus_db.max_marginal_relevance_search_by_vector(embedding_vector[0], k=top_k)
+        else:
+            docs = medical_corpus_db.similarity_search_by_vector(embedding_vector[0], k=top_k)
         sources = {}
         context = []
         for doc in docs:
@@ -108,7 +124,8 @@ def main():
     for index, row in df.iterrows():
         result["id"].append(row["id"].strip())
         question, choices, num_choices = process_single_row(row)
-        context = get_context(question, choices, top_k=5)
+        context = get_context(question, choices, top_k=15)
+        # question = preprocess_question(question)
         output, prompt = qwen_model.generate(question, choices, context)
         print(output)
         output_json = process_output(output, num_choices)
