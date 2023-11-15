@@ -119,13 +119,13 @@ def process_output(output, num_ans):
 
 
 def main():
-    df = pd.read_csv("./KALAPA_ByteBattles_2023_MEDICAL_Set1/MEDICAL/public_test.csv")
+    df = pd.read_csv("/home/lap15375/Downloads/KALAPA_ByteBattles_2023_MEDICAL_Set1/MEDICAL/public_test.csv")
     result = {"id": [], "answer": []}
     for index, row in df.iterrows():
         result["id"].append(row["id"].strip())
         question, choices, num_choices = process_single_row(row)
         context = get_context(question, choices, top_k=15)
-        # question = preprocess_question(question)
+        question = preprocess_question(question)
         output, prompt = qwen_model.generate(question, choices, context)
         print(output)
         output_json = process_output(output, num_choices)
