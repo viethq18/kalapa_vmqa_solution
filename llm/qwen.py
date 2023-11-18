@@ -22,10 +22,10 @@ class QwenInfer:
             model_path, trust_remote_code=True
         )
         model.generation_config.do_sample = True  # use greedy decoding
-        model.generation_config.repetition_penalty = 1.5  # disable repetition penalty
-        model.generation_config.top_k = 40
-        model.generation_config.top_p = 0.99
-        model.generation_config.temperature = 0
+        model.generation_config.repetition_penalty = 1.1  # disable repetition penalty
+        model.generation_config.top_k = 1
+        model.generation_config.top_p = 1
+        # model.generation_config.temperature = 0.01
         return model, tokenizer
 
     def preprocess_prompt(self, question, choices, context=None):
